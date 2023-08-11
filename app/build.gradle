@@ -1,12 +1,10 @@
-
 plugins {
-    id "com.android.application"
-    id "org.jetbrains.kotlin.android"
-    id 'org.jetbrains.kotlin.kapt'
-    id("com.google.devtools.ksp")
-    id "kotlin-parcelize"
-    id "dagger.hilt.android.plugin"
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
     id 'kotlin-android'
+    id 'com.squareup.sqldelight'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -45,12 +43,14 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.4.7'
+        kotlinCompilerExtensionVersion compose_version
+        kotlinCompilerVersion '1.5.21'
     }
-    packaging {
+    packagingOptions {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1,LICENSE-notice.md,LICENSE.md}"
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
+
         }
     }
 }
@@ -77,8 +77,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
 
 
-
-
     implementation("androidx.core:core-ktx:1.8.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.5.0")
@@ -92,27 +90,23 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
 
 
-
     ////Compose
 
 
-    testImplementation("androidx.compose.ui:ui-test-junit4:1.4.3")
-    implementation("androidx.compose.ui:ui:1.4.3")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.4.3")
-    implementation("androidx.compose.material:material:1.4.3")
-    implementation("androidx.compose.material:material-icons-extended:1.4.3")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.4.3")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.4.3")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.4.3")
-    implementation("androidx.compose.runtime:runtime-livedata:1.4.3")
+    testImplementation("androidx.compose.ui:ui-test-junit4:$compose_version")
+    implementation("androidx.compose.ui:ui:$compose_version")
+    implementation("androidx.compose.ui:ui-tooling-preview:$compose_version")
+    implementation("androidx.compose.material:material:$compose_version")
+    implementation("androidx.compose.material:material-icons-extended:$compose_version")
+    debugImplementation("androidx.compose.ui:ui-tooling:$compose_version")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:$compose_version")
 
-    implementation("androidx.activity:activity-compose:1.3.1")
+    implementation("androidx.activity:activity-compose:1.7.2")
     implementation("androidx.compose.material3:material3:1.1.1")
 
     implementation("androidx.navigation:navigation-compose:2.6.0")
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 
-    implementation("androidx.compose.material3:material3-window-size-class:1.1.1")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
@@ -183,9 +177,9 @@ dependencies {
 //Swipe refresh
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
-//    // SQL Delight
-//    implementation "com.squareup.sqldelight:android-driver:1.5.2"
-//    implementation "com.squareup.sqldelight:coroutines-extensions-jvm:1.5.2"
+    // SQL Delight
+    implementation "com.squareup.sqldelight:android-driver:$sql_delight_version"
+    implementation "com.squareup.sqldelight:coroutines-extensions-jvm:$sql_delight_version"
 
 
     testImplementation("io.mockk:mockk:1.13.3")
@@ -212,14 +206,27 @@ dependencies {
     kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.44.2")
 
 
-    // === End ===
-
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 }
 
-
-kapt {
-    correctErrorTypes = true
+sqldelight {
+    CountryDataBase {
+        packageName = "com.danielcaballero.composetest"
+    }
 }
+
+//sqldelight {
+//    databases {
+//        Database { // This will be the name of the generated database class.
+//            packageName = "com.danielcaballero.composetest.database"
+//            dialect "mysql"
+//        }
+//    }
+//}
+
+
+//kapt {
+//    correctErrorTypes = true
+//}
