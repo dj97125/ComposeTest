@@ -1,4 +1,4 @@
-package com.danielcaballero.composetest.model.local.country_response
+package com.danielcaballero.composetest.model.network.country_response
 
 data class CountryResponse(
     val capital: String?,

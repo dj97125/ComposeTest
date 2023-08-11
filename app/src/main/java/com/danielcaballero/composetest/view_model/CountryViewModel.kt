@@ -7,10 +7,12 @@ import com.danielcaballero.composetest.domain.Repository
 import com.danielcaballero.composetest.use_cases.GetCountryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import javax.inject.Inject
@@ -27,6 +29,10 @@ class CountryViewModel @Inject constructor(
     val countryResponse: StateFlow<StateAction?>
         get() = _countryResponse.asStateFlow()
 
+    private val eventChannel = Channel<StateAction>()
+    val eventFlow = eventChannel.receiveAsFlow()
+    // Channels it wont persist to screen rotation, you need to call the function again
+
     init {
         getCountries()
     }
@@ -38,6 +44,7 @@ class CountryViewModel @Inject constructor(
                 launch {
                     getCountryUseCase().collect() {
                         _countryResponse.value = it
+                        eventChannel.send(it)
                     }
                 }
             }

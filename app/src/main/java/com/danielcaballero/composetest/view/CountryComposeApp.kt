@@ -15,8 +15,10 @@ import com.danielcaballero.composetest.view_model.CountryViewModel
 fun Material3AppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = true,
+
 ) {
     val countryViewModel = hiltViewModel<CountryViewModel>()
+
     ComposeTestTheme(
         darkTheme = darkTheme,
         dynamicColor = dynamicColor

@@ -1,9 +1,8 @@
 package com.danielcaballero.composetest.domain
 
 import com.danielcaballero.composetest.common.StateAction
-import com.danielcaballero.composetest.model.local.LocalDataSource
+import com.danielcaballero.composetest.model.network.LocalDataSource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 

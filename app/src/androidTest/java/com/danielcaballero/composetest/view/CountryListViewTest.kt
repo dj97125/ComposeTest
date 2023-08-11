@@ -6,7 +6,7 @@ import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import com.danielcaballero.composetest.common.fakeCountry
-import com.danielcaballero.composetest.model.local.country_response.CountryResponse
+import com.danielcaballero.composetest.model.network.country_response.CountryResponse
 import com.danielcaballero.composetest.ui.util.COUNTRY_CAPITAL_LABEL
 import com.danielcaballero.composetest.ui.util.COUNTRY_NAME_LABEL
 import com.danielcaballero.composetest.ui.util.DETAILS_CAPITAL

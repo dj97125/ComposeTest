@@ -24,8 +24,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.danielcaballero.composetest.common.StateAction
-import com.danielcaballero.composetest.model.local.country_response.CountryResponse
+import com.danielcaballero.composetest.model.network.country_response.CountryResponse
 import com.danielcaballero.composetest.ui.theme.Typography
 import com.danielcaballero.composetest.ui.util.AlertError
 import com.danielcaballero.composetest.ui.util.AlertWelcome
@@ -37,9 +38,13 @@ import com.danielcaballero.composetest.ui.util.DETAILS_NAME
 import com.danielcaballero.composetest.ui.util.LoadingAnimation
 import com.danielcaballero.composetest.view_model.CountryViewModel
 
+
 @Composable
 fun CountryListView(viewModel: CountryViewModel, context: Context = LocalContext.current) {
-    val country by viewModel.countryResponse.collectAsState()
+
+    val country by viewModel.countryResponse.collectAsStateWithLifecycle()
+    val eventFlow by viewModel.eventFlow.collectAsState(null)
+
 
 
     Box(
@@ -48,24 +53,26 @@ fun CountryListView(viewModel: CountryViewModel, context: Context = LocalContext
             .padding(8.dp)
     ) {
 
+        when(eventFlow){
+            is StateAction.Succes<*> -> AlertWelcome(
+                title = "SUCCESS",
+                body = "Welcome to your country list"
+            )
+
+            is StateAction.Errror -> AlertError(
+                onRetry = { viewModel.getCountries() },
+                title = "ERROR",
+                body = "Something wrong"
+            )
+            else -> {}
+        }
+
         when (val state = country) {
             is StateAction.Succes<*> -> {
                 val retrievedElements = state.respoonse as List<CountryResponse>
                 ListOfElements(country = retrievedElements)
-                AlertWelcome(
-                    title = "SUCCESS",
-                    body = "Welcome to your country list"
-                )
 
             }
-
-            is StateAction.Errror ->
-                AlertError(
-                    onRetry = { viewModel.getCountries() },
-                    title = "ERROR",
-                    body = "Something wrong"
-                )
-
             StateAction.Loading -> LoadingAnimation()
             else -> {}
         }

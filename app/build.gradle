@@ -6,6 +6,7 @@ plugins {
     id("com.google.devtools.ksp")
     id "kotlin-parcelize"
     id "dagger.hilt.android.plugin"
+    id 'kotlin-android'
 }
 
 android {
@@ -19,7 +20,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner = "com.devexperto.testingexpert.di.HiltTestRunner"
+        testInstrumentationRunner = "com.danielcaballero.composetest.comon.HiltTestRunner"
 
 
         vectorDrawables {
@@ -182,6 +183,10 @@ dependencies {
 //Swipe refresh
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
+//    // SQL Delight
+//    implementation "com.squareup.sqldelight:android-driver:1.5.2"
+//    implementation "com.squareup.sqldelight:coroutines-extensions-jvm:1.5.2"
+
 
     testImplementation("io.mockk:mockk:1.13.3")
     androidTestImplementation("io.mockk:mockk:1.13.3")
@@ -213,6 +218,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 }
+
 
 kapt {
     correctErrorTypes = true

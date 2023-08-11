@@ -67,8 +67,7 @@ fun AlertError(onRetry: () -> Unit, title: String, body: String) {
 
 
 @Composable
-fun AlertWelcome(title: String, body: String) {
-
+fun AlertWelcome(title: String, body: String){
     var openDialog by remember { mutableStateOf(true) }
 
     if (openDialog) {
@@ -104,6 +103,7 @@ fun AlertWelcome(title: String, body: String) {
             }
         )
     }
+
 
 
 }

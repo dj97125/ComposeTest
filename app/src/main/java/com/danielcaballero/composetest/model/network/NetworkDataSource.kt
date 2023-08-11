@@ -1,4 +1,4 @@
-package com.danielcaballero.composetest.model.local
+package com.danielcaballero.composetest.model.network
 
 import com.danielcaballero.composetest.common.Code400Exception
 import com.danielcaballero.composetest.common.NullBody

@@ -1,6 +1,6 @@
 package com.danielcaballero.composetest.common
 
-import com.danielcaballero.composetest.model.local.country_response.CountryResponse
+import com.danielcaballero.composetest.model.network.country_response.CountryResponse
 
 val fakeCountry =
     CountryResponse(
