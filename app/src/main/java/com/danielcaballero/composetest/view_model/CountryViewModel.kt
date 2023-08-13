@@ -1,18 +1,17 @@
 package com.danielcaballero.composetest.view_model
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.danielcaballero.composetest.common.StateAction
-import com.danielcaballero.composetest.domain.Repository
 import com.danielcaballero.composetest.use_cases.GetCountryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import javax.inject.Inject
@@ -29,12 +28,22 @@ class CountryViewModel @Inject constructor(
     val countryResponse: StateFlow<StateAction?>
         get() = _countryResponse.asStateFlow()
 
-    private val eventChannel = Channel<StateAction>()
-    val eventFlow = eventChannel.receiveAsFlow()
-    // Channels it wont persist to screen rotation, you need to call the function again
+    var isVisibleVM by mutableStateOf(false)
+        private set
+
+    private var networkStatus by mutableStateOf(false)
+        private set
 
     init {
         getCountries()
+    }
+
+    fun changeVisibility(isVisible: Boolean) {
+        isVisibleVM = isVisible
+    }
+
+    fun networkStatus(isConnected: Boolean) {
+        networkStatus = isConnected
     }
 
     fun getCountries() {
@@ -42,9 +51,9 @@ class CountryViewModel @Inject constructor(
         viewModelScope.launch(corroutineExceptionHandler) {
             supervisorScope {
                 launch {
-                    getCountryUseCase().collect() {
+                    getCountryUseCase(networkStatus).collect() {
                         _countryResponse.value = it
-                        eventChannel.send(it)
+                        isVisibleVM = true
                     }
                 }
             }

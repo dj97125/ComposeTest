@@ -2,7 +2,7 @@
 
 buildscript {
     ext {
-        compose_version = '1.4.3'
+        compose_version = '1.5.0'
         sql_delight_version = '1.5.4'
     }
     repositories {

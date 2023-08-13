@@ -1,23 +1,23 @@
-CREATE TABLE personEntity (
-    id INTEGER NOT NULL PRIMARY KEY,
-    firstName TEXT NOT NULL,
-    lastName TEXT NOT NULL
+CREATE TABLE countryEntity (
+    capital TEXT NOT NULL PRIMARY KEY,
+    code TEXT NOT NULL,
+    flag TEXT NOT NULL,
+    name TEXT NOT NULL,
+    region TEXT NOT NULL,
+    createdAt INTEGER NOT NULL
 );
 
-getPersonById:
-SELECT *
-FROM personEntity
-WHERE id = :id;
 
-getAllPersons:
-SELECT *
-FROM personEntity;
+getAllCountries:
+SELECT * FROM countryEntity;
 
-insertPerson:
+insertCountry:
 INSERT OR REPLACE
-INTO personEntity
-VALUES(?,?,?);
-
-deletePersonById:
-DELETE FROM personEntity
-WHERE id = :id;
+INTO countryEntity(
+    capital,
+    code,
+    flag,
+    name,
+    region,
+    createdAt
+) VALUES(?,?,?,?,?,?);

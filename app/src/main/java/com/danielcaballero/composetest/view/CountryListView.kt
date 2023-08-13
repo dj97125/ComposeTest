@@ -15,7 +15,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.danielcaballero.composetest.common.StateAction
+import com.danielcaballero.composetest.domain.CountryDomain
 import com.danielcaballero.composetest.model.network.country_response.CountryResponse
 import com.danielcaballero.composetest.ui.theme.Typography
 import com.danielcaballero.composetest.ui.util.AlertError
@@ -43,7 +43,7 @@ import com.danielcaballero.composetest.view_model.CountryViewModel
 fun CountryListView(viewModel: CountryViewModel, context: Context = LocalContext.current) {
 
     val country by viewModel.countryResponse.collectAsStateWithLifecycle()
-    val eventFlow by viewModel.eventFlow.collectAsState(null)
+    val isVisible = viewModel.isVisibleVM
 
 
 
@@ -53,26 +53,32 @@ fun CountryListView(viewModel: CountryViewModel, context: Context = LocalContext
             .padding(8.dp)
     ) {
 
-        when(eventFlow){
-            is StateAction.Succes<*> -> AlertWelcome(
-                title = "SUCCESS",
-                body = "Welcome to your country list"
-            )
-
-            is StateAction.Errror -> AlertError(
-                onRetry = { viewModel.getCountries() },
-                title = "ERROR",
-                body = "Something wrong"
-            )
-            else -> {}
-        }
-
         when (val state = country) {
             is StateAction.Succes<*> -> {
-                val retrievedElements = state.respoonse as List<CountryResponse>
+                val retrievedElements = state.respoonse as List<CountryDomain>
                 ListOfElements(country = retrievedElements)
 
+                AlertWelcome(
+                    isVisible = isVisible,
+                    title = "SUCCESS",
+                    body = "Welcome to your country list",
+                    onDismiss = { viewModel.changeVisibility(isVisible = false) }
+                )
+
+
             }
+
+            is StateAction.Errror -> {
+
+                AlertError(
+                    isVisible = isVisible,
+                    onDismiss = { viewModel.changeVisibility(isVisible = false) },
+                    onRetry = { viewModel.getCountries() },
+                    title = "ERROR",
+                    body = "Something wrong"
+                )
+            }
+
             StateAction.Loading -> LoadingAnimation()
             else -> {}
         }
@@ -83,7 +89,7 @@ fun CountryListView(viewModel: CountryViewModel, context: Context = LocalContext
 
 
 @Composable
-fun ListOfElements(country: List<CountryResponse>, modifier: Modifier = Modifier) {
+fun ListOfElements(country: List<CountryDomain>, modifier: Modifier = Modifier) {
 
     LazyColumn(modifier = modifier.fillMaxSize()) {
         country.forEach { country ->
@@ -98,7 +104,7 @@ fun ListOfElements(country: List<CountryResponse>, modifier: Modifier = Modifier
 
 @Composable
 fun CountryElement(
-    country: CountryResponse,
+    country: CountryDomain,
     modifier: Modifier = Modifier
 ) {
     Card(

@@ -4,22 +4,23 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.style.TextAlign
 import com.danielcaballero.composetest.ui.theme.Typography
 
 
 @Composable
-fun AlertError(onRetry: () -> Unit, title: String, body: String) {
+fun AlertError(
+    isVisible: Boolean,
+    onDismiss: () -> Unit,
+    onRetry: () -> Unit,
+    title: String,
+    body: String
+) {
 
-    var openDialog by remember { mutableStateOf(true) }
 
-    if (openDialog) {
+    if (isVisible) {
         AlertDialog(
-            onDismissRequest = { openDialog = false },
+            onDismissRequest = { onDismiss() },
             title = {
                 AutoResizedText(
                     text = title,
@@ -39,7 +40,7 @@ fun AlertError(onRetry: () -> Unit, title: String, body: String) {
             confirmButton = {
                 TextButton(onClick = {
                     onRetry()
-                    openDialog = false
+                    onDismiss()
                 }) {
                     AutoResizedText(
                         text = "Retry",
@@ -50,7 +51,7 @@ fun AlertError(onRetry: () -> Unit, title: String, body: String) {
                 }
             },
             dismissButton = {
-                TextButton(onClick = { openDialog = false }) {
+                TextButton(onClick = { onDismiss() }) {
                     AutoResizedText(
                         text = "Dismiss",
                         color = MaterialTheme.colorScheme.secondary,
@@ -67,12 +68,11 @@ fun AlertError(onRetry: () -> Unit, title: String, body: String) {
 
 
 @Composable
-fun AlertWelcome(title: String, body: String){
-    var openDialog by remember { mutableStateOf(true) }
+fun AlertWelcome(isVisible: Boolean, onDismiss: () -> Unit, title: String, body: String) {
 
-    if (openDialog) {
+    if (isVisible) {
         AlertDialog(
-            onDismissRequest = { openDialog = false },
+            onDismissRequest = { onDismiss() },
             title = {
                 AutoResizedText(
                     text = title,
@@ -91,7 +91,7 @@ fun AlertWelcome(title: String, body: String){
             },
             confirmButton = {
                 TextButton(onClick = {
-                    openDialog = false
+                    onDismiss()
                 }) {
                     AutoResizedText(
                         text = "Dismiss",
