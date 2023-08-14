@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.danielcaballero.composetest.common.ConnectionStatus
 import com.danielcaballero.composetest.common.StateAction
 import com.danielcaballero.composetest.use_cases.GetCountryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,6 +17,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import javax.inject.Inject
 
+data class VisibilityComponents(
+    val component: AlertDialogs,
+    var isVisible: Boolean
+)
+
+enum class AlertDialogs {
+    CountryResponse, Observer
+}
 
 @HiltViewModel
 class CountryViewModel @Inject constructor(
@@ -28,22 +37,36 @@ class CountryViewModel @Inject constructor(
     val countryResponse: StateFlow<StateAction?>
         get() = _countryResponse.asStateFlow()
 
-    var isVisibleVM by mutableStateOf(false)
+
+    var isVisibleCountryResponseAlert by mutableStateOf(false)
         private set
 
-    private var networkStatus by mutableStateOf(false)
+    var isVisibleNetworkObserverAlert by mutableStateOf(false)
+        private set
+
+
+    var networkStatus by mutableStateOf<ConnectionStatus?>(null)
         private set
 
     init {
         getCountries()
     }
 
-    fun changeVisibility(isVisible: Boolean) {
-        isVisibleVM = isVisible
+    fun changeVisibility(visibilityComponent: VisibilityComponents) {
+
+        when (visibilityComponent.component) {
+            AlertDialogs.Observer -> isVisibleNetworkObserverAlert = visibilityComponent.isVisible
+
+            AlertDialogs.CountryResponse -> isVisibleCountryResponseAlert =
+                visibilityComponent.isVisible
+
+        }
+
     }
 
-    fun networkStatus(isConnected: Boolean) {
-        networkStatus = isConnected
+
+    fun networkStatus(status: ConnectionStatus) {
+        networkStatus = status
     }
 
     fun getCountries() {
@@ -51,9 +74,9 @@ class CountryViewModel @Inject constructor(
         viewModelScope.launch(corroutineExceptionHandler) {
             supervisorScope {
                 launch {
-                    getCountryUseCase(networkStatus).collect() {
+                    getCountryUseCase().collect() {
                         _countryResponse.value = it
-                        isVisibleVM = true
+                        isVisibleCountryResponseAlert = true
                     }
                 }
             }

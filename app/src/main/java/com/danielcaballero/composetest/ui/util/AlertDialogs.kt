@@ -9,7 +9,7 @@ import com.danielcaballero.composetest.ui.theme.Typography
 
 
 @Composable
-fun AlertError(
+fun AlertRetry(
     isVisible: Boolean,
     onDismiss: () -> Unit,
     onRetry: () -> Unit,
@@ -68,7 +68,7 @@ fun AlertError(
 
 
 @Composable
-fun AlertWelcome(isVisible: Boolean, onDismiss: () -> Unit, title: String, body: String) {
+fun AlertNotification(isVisible: Boolean, onDismiss: () -> Unit, title: String, body: String) {
 
     if (isVisible) {
         AlertDialog(

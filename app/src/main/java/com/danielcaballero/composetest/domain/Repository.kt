@@ -1,6 +1,5 @@
 package com.danielcaballero.composetest.domain
 
-import com.danielcaballero.composetest.common.NetworkConnectivityObserver
 import com.danielcaballero.composetest.common.StateAction
 import com.danielcaballero.composetest.model.network.NetworkDataSource
 import com.danielcaballero.composetest.model.remote.LocalDataSource
@@ -14,14 +13,13 @@ import javax.inject.Inject
 
 
 interface Repository {
-    fun getCountriesDomainLayer(isConnected: Boolean): Flow<StateAction>
+    fun getCountriesDomainLayer(): Flow<StateAction>
 }
 class RepositoryImpl @Inject constructor(
-    private val networkConnectivityObserver: NetworkConnectivityObserver,
     private val localDataSource: LocalDataSource,
     private val networkDataSource: NetworkDataSource
 ): Repository {
-    override fun getCountriesDomainLayer(isConnected: Boolean): Flow<StateAction> = flow {
+    override fun getCountriesDomainLayer(): Flow<StateAction> = flow {
 
         if (checkAvailability()) {
             networkDataSource.getCountriesDataSource().collect() { state ->
@@ -61,17 +59,6 @@ class RepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             false
         }
-
-//        fun isConnected(): Boolean {
-//            return try {
-//                val sock = Socket()
-//                sock.connect(InetSocketAddress("8.8.8.8", 53), 1500)
-//                sock.close()
-//                true
-//            } catch (e: IOException) {
-//                false
-//            }
-//        }
     }
 
 }

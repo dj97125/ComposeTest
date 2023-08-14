@@ -6,13 +6,10 @@ import com.danielcaballero.composetest.domain.CountryDomain
 import countries.database.CountryEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import javax.inject.Inject
-import kotlin.random.Random
 
 interface LocalDataSource {
     suspend fun getAllCountries(): List<CountryDomain>
@@ -28,23 +25,11 @@ class LocalDataSourceImpl @Inject constructor(
 
 
     override suspend fun getAllCountries(): List<CountryDomain>  {
-        val list = queries.getAllCountries().executeAsList().map { countryEntity ->
+        return queries.getAllCountries().executeAsList().map { countryEntity ->
             supervisorScope {
                 async { countryEntity.toCountryDomain() }
             }
         }.map { it.await() }
-        Log.i("LocalDataSource", "$list")
-
-        return list
-
-
-//            .mapToList().map { countryEntity ->
-//            supervisorScope {
-//                countryEntity.map {
-//                    async { it.toCountryDomain() }
-//                }.map { it.await() }
-//
-//            }
 
     }
 

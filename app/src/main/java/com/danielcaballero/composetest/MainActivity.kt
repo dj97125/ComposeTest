@@ -5,30 +5,41 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.danielcaballero.composetest.common.ConnectionStatus
 import com.danielcaballero.composetest.common.NetworkConnectivityObserver
 import com.danielcaballero.composetest.common.NetworkConnectivityObserverImpl
 import com.danielcaballero.composetest.ui.theme.ComposeTestTheme
 import com.danielcaballero.composetest.view.Material3AppTheme
+import com.danielcaballero.composetest.view_model.AlertDialogs
 import com.danielcaballero.composetest.view_model.CountryViewModel
+import com.danielcaballero.composetest.view_model.VisibilityComponents
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-//    private val viewModel: CountryViewModel by viewModels()
-//    private lateinit var connectivityObserver: NetworkConnectivityObserver
+
+
+    private lateinit var connectivityObserver: NetworkConnectivityObserver
+
+    private val viewModel: CountryViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        connectivityObserver = NetworkConnectivityObserverImpl(applicationContext)
-//
-//        connectivityObserver.observe().onEach {
-//            if (it == ConnectionStatus.Available) {
-//                viewModel.networkStatus(isConnected = true)
-//            }
-//        }.launchIn(lifecycleScope)
+        connectivityObserver = NetworkConnectivityObserverImpl(applicationContext)
+
+        connectivityObserver.observe().onEach {
+            viewModel.networkStatus(status = it)
+
+            viewModel.changeVisibility(
+                VisibilityComponents(
+                    AlertDialogs.Observer,
+                    isVisible = true
+                )
+            )
+
+        }.launchIn(lifecycleScope)
 
         setContent {
             ComposeTestTheme {

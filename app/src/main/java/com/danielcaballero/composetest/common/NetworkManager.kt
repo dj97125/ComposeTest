@@ -21,7 +21,7 @@ interface NetworkConnectivityObserver {
 }
 
 class NetworkConnectivityObserverImpl(
-    val context: Context
+    private val context: Context
 ) : NetworkConnectivityObserver {
 
     private val connectivityManager =

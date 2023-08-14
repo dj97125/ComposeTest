@@ -5,6 +5,6 @@ import javax.inject.Inject
 
 class GetCountryUseCase @Inject constructor(private val repository: Repository) {
 
-    operator fun invoke(isConnected: Boolean) =
-        repository.getCountriesDomainLayer(isConnected = isConnected)
+    operator fun invoke() =
+        repository.getCountriesDomainLayer()
 }

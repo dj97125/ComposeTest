@@ -24,26 +24,32 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.danielcaballero.composetest.common.ConnectionStatus
 import com.danielcaballero.composetest.common.StateAction
 import com.danielcaballero.composetest.domain.CountryDomain
-import com.danielcaballero.composetest.model.network.country_response.CountryResponse
 import com.danielcaballero.composetest.ui.theme.Typography
-import com.danielcaballero.composetest.ui.util.AlertError
-import com.danielcaballero.composetest.ui.util.AlertWelcome
+import com.danielcaballero.composetest.ui.util.AlertNotification
+import com.danielcaballero.composetest.ui.util.AlertRetry
 import com.danielcaballero.composetest.ui.util.AutoResizedText
 import com.danielcaballero.composetest.ui.util.COUNTRY_CAPITAL_LABEL
 import com.danielcaballero.composetest.ui.util.COUNTRY_NAME_LABEL
 import com.danielcaballero.composetest.ui.util.DETAILS_CAPITAL
 import com.danielcaballero.composetest.ui.util.DETAILS_NAME
 import com.danielcaballero.composetest.ui.util.LoadingAnimation
+import com.danielcaballero.composetest.view_model.AlertDialogs
 import com.danielcaballero.composetest.view_model.CountryViewModel
+import com.danielcaballero.composetest.view_model.VisibilityComponents
 
 
 @Composable
 fun CountryListView(viewModel: CountryViewModel, context: Context = LocalContext.current) {
 
     val country by viewModel.countryResponse.collectAsStateWithLifecycle()
-    val isVisible = viewModel.isVisibleVM
+
+    val networkStatus = viewModel.networkStatus
+
+    val countryResponseDialogIsVisible = viewModel.isVisibleCountryResponseAlert
+    val networkObserverDialogIsVisible = viewModel.isVisibleNetworkObserverAlert
 
 
 
@@ -53,16 +59,65 @@ fun CountryListView(viewModel: CountryViewModel, context: Context = LocalContext
             .padding(8.dp)
     ) {
 
+
+        when (networkStatus) {
+
+            ConnectionStatus.Lost -> {
+                AlertNotification(
+                    isVisible = networkObserverDialogIsVisible,
+                    title = "ALERT",
+                    body = "No connection",
+                    onDismiss = {
+                        viewModel.changeVisibility(
+                            VisibilityComponents(
+                                AlertDialogs.Observer,
+                                isVisible = false
+                            )
+                        )
+                    }
+                )
+            }
+
+
+            ConnectionStatus.Available -> {
+                AlertNotification(
+                    isVisible = networkObserverDialogIsVisible,
+                    title = "ALERT",
+                    body = "Back online",
+                    onDismiss = {
+                        viewModel.changeVisibility(
+                            VisibilityComponents(
+                                AlertDialogs.Observer,
+                                isVisible = false
+                            )
+                        )
+                    }
+                )
+
+            }
+
+            else -> {}
+        }
+
+
+
         when (val state = country) {
             is StateAction.Succes<*> -> {
                 val retrievedElements = state.respoonse as List<CountryDomain>
                 ListOfElements(country = retrievedElements)
 
-                AlertWelcome(
-                    isVisible = isVisible,
+                AlertNotification(
+                    isVisible = countryResponseDialogIsVisible,
                     title = "SUCCESS",
                     body = "Welcome to your country list",
-                    onDismiss = { viewModel.changeVisibility(isVisible = false) }
+                    onDismiss = {
+                        viewModel.changeVisibility(
+                            VisibilityComponents(
+                                AlertDialogs.CountryResponse,
+                                isVisible = false
+                            )
+                        )
+                    }
                 )
 
 
@@ -70,13 +125,22 @@ fun CountryListView(viewModel: CountryViewModel, context: Context = LocalContext
 
             is StateAction.Errror -> {
 
-                AlertError(
-                    isVisible = isVisible,
-                    onDismiss = { viewModel.changeVisibility(isVisible = false) },
+                AlertRetry(
+                    isVisible = countryResponseDialogIsVisible,
+                    onDismiss = {
+                        viewModel.changeVisibility(
+                            VisibilityComponents(
+                                AlertDialogs.CountryResponse,
+                                isVisible = false
+                            )
+                        )
+                    },
                     onRetry = { viewModel.getCountries() },
                     title = "ERROR",
-                    body = "Something wrong"
+                    body = "Something went wrong"
                 )
+
+
             }
 
             StateAction.Loading -> LoadingAnimation()

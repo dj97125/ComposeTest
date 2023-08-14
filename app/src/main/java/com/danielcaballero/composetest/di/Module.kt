@@ -83,17 +83,16 @@ interface Module {
         fun provideLocalDataSource(driver: SqlDriver): LocalDataSource =
             LocalDataSourceImpl(CountryDataBase(driver))
 
-        @Provides
-        fun provideConnectivityObserver(@ApplicationContext context: Context): NetworkConnectivityObserver =
-            NetworkConnectivityObserverImpl(context)
+//        @Provides
+//        fun provideConnectivityObserver(@ApplicationContext context: Context): NetworkConnectivityObserver =
+//            NetworkConnectivityObserverImpl(context)
 
         @Provides
         fun provideRepository(
-            networkConnectivityObserver: NetworkConnectivityObserver,
             localDataSource: LocalDataSource,
             networkDataSource: NetworkDataSource
         ): Repository =
-            RepositoryImpl(networkConnectivityObserver, localDataSource, networkDataSource)
+            RepositoryImpl(localDataSource, networkDataSource)
 
 
     }
