@@ -1,12 +1,16 @@
 package com.danielcaballero.composetest.model.network
 
-import com.danielcaballero.composetest.common.Code400Exception
-import com.danielcaballero.composetest.common.NullBody
+import com.danielcaballero.composetest.common.END_POINT_COUNTRIES_KTOR
 import com.danielcaballero.composetest.common.StateAction
 import com.danielcaballero.composetest.domain.CountryDomain
 import com.danielcaballero.composetest.model.network.country_response.CountryResponse
+import io.ktor.client.HttpClient
+import io.ktor.client.call.NoTransformationFoundException
+import io.ktor.client.request.get
+import io.ktor.client.request.url
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.serialization.decodeFromString
 import javax.inject.Inject
 
 
@@ -15,27 +19,24 @@ interface NetworkDataSource {
 }
 
 class NetworkDataSourceImpl @Inject constructor(
-    private val service: NetworkCountry
+    private val service: HttpClient
 
 ) : NetworkDataSource {
     override fun getCountriesDataSource(): Flow<StateAction> = flow {
-        val networkService = service.getAllCountries()
 
-        networkService.body()?.let { response ->
-            emit(StateAction.Succes(response.map {
-                it.toCountryDomain()
-            }, networkService.code().toString()))
-
-
-        } ?: run {
-            emit(StateAction.Errror(NullBody()))
-        }
-
-
-        if (!networkService.isSuccessful) {
-            if (networkService.code().toString().startsWith("4")) {
-                emit(StateAction.Errror(Code400Exception()))
+        try {
+            val response: List<CountryResponse> = service.get {
+                url(END_POINT_COUNTRIES_KTOR)
             }
+            emit(StateAction.Succes(response.toCountryDomain(), "Data From Network"))
+        } catch (e: NoTransformationFoundException) {
+            val responseString: String = service.get(END_POINT_COUNTRIES_KTOR)
+
+            val json = kotlinx.serialization.json.Json {
+                ignoreUnknownKeys = true
+            }
+            val response = json.decodeFromString<List<CountryResponse>>(responseString)
+            emit(StateAction.Succes(response.toCountryDomain(), "Data From Network"))
         }
 
     }

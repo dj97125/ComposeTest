@@ -1,6 +1,7 @@
 package com.danielcaballero.composetest
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -13,8 +14,11 @@ import com.danielcaballero.composetest.view_model.AlertDialogs
 import com.danielcaballero.composetest.view_model.CountryViewModel
 import com.danielcaballero.composetest.view_model.VisibilityComponents
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -27,6 +31,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         connectivityObserver = NetworkConnectivityObserverImpl(applicationContext)
 
         connectivityObserver.observe().onEach {
@@ -35,7 +40,7 @@ class MainActivity : ComponentActivity() {
             viewModel.changeVisibility(
                 VisibilityComponents(
                     AlertDialogs.Observer,
-                    isVisible = true
+                    isVisible = true,
                 )
             )
 

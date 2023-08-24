@@ -1,15 +1,10 @@
 package com.danielcaballero.composetest.di
 
 import android.app.Application
-import android.content.Context
 import android.util.Log
 import com.danielcaballero.composetest.CountryDataBase
-import com.danielcaballero.composetest.common.BASE_URL
-import com.danielcaballero.composetest.common.NetworkConnectivityObserver
-import com.danielcaballero.composetest.common.NetworkConnectivityObserverImpl
 import com.danielcaballero.composetest.domain.Repository
 import com.danielcaballero.composetest.domain.RepositoryImpl
-import com.danielcaballero.composetest.model.network.NetworkCountry
 import com.danielcaballero.composetest.model.network.NetworkDataSource
 import com.danielcaballero.composetest.model.network.NetworkDataSourceImpl
 import com.danielcaballero.composetest.model.remote.LocalDataSource
@@ -21,13 +16,19 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
-import dagger.hilt.android.qualifiers.ApplicationContext
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.android.Android
+import io.ktor.client.features.HttpTimeout
+import io.ktor.client.features.defaultRequest
+import io.ktor.client.features.json.JsonFeature
+import io.ktor.client.features.json.serializer.KotlinxSerializer
+import io.ktor.client.features.logging.LogLevel
+import io.ktor.client.features.logging.Logging
+import io.ktor.client.request.accept
+import io.ktor.http.ContentType
+import io.ktor.http.HttpMethod
+import io.ktor.http.contentType
 import kotlinx.coroutines.CoroutineExceptionHandler
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
 
 
 @Module
@@ -49,26 +50,49 @@ interface Module {
                 Log.e("CountryViewModel", throwable.toString())
             }
 
-        @Provides
-        fun provideService(): NetworkCountry =
-            Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(provideOkHttpClient())
-                .build()
-                .create(NetworkCountry::class.java)
+//        @Provides
+//        fun provideService(): NetworkCountry =
+//            Retrofit.Builder()
+//                .baseUrl(BASE_URL)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .client(provideOkHttpClient())
+//                .build()
+//                .create(NetworkCountry::class.java)
+//
+//
+//        @Provides
+//        fun provideOkHttpClient(): OkHttpClient =
+//            OkHttpClient.Builder()
+//                .addInterceptor(HttpLoggingInterceptor().apply {
+//                    level = HttpLoggingInterceptor.Level.BODY
+//                })
+//                .connectTimeout(30, TimeUnit.SECONDS)
+//                .readTimeout(30, TimeUnit.SECONDS)
+//                .writeTimeout(30, TimeUnit.SECONDS)
+//                .build()
 
-
         @Provides
-        fun provideOkHttpClient(): OkHttpClient =
-            OkHttpClient.Builder()
-                .addInterceptor(HttpLoggingInterceptor().apply {
-                    level = HttpLoggingInterceptor.Level.BODY
-                })
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(30, TimeUnit.SECONDS)
-                .build()
+        fun provideHttpClient(): HttpClient {
+            return HttpClient(Android) {
+                val time = 3000L
+                install(Logging) {
+                    level = LogLevel.ALL
+                }
+                install(JsonFeature) {
+
+                    serializer = KotlinxSerializer()
+                }
+                install(HttpTimeout) {
+                    requestTimeoutMillis = time
+                    connectTimeoutMillis = time
+                    socketTimeoutMillis = time
+                }
+                defaultRequest {
+                    if (method != HttpMethod.Get) contentType(ContentType.Application.Json)
+                    accept(ContentType.Application.Json)
+                }
+            }
+        }
 
         @Provides
         fun provideSqlDriver(app: Application): SqlDriver = AndroidSqliteDriver(

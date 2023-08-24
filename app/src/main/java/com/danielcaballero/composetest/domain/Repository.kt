@@ -21,15 +21,19 @@ class RepositoryImpl @Inject constructor(
 ): Repository {
     override fun getCountriesDomainLayer(): Flow<StateAction> = flow {
 
-        if (checkAvailability()) {
+        val list = localDataSource.getAllCountries()
+
+        if (list.isEmpty().not()) {
+            emit(StateAction.Succes(list, "200"))
+        } else {
             networkDataSource.getCountriesDataSource().collect() { state ->
                 when (state) {
                     is StateAction.Succes<*> -> {
                         val retrievedCountries = state.respoonse as List<CountryDomain>
                         val code = state.code
-
-                        emit(StateAction.Succes(retrievedCountries, code))
                         localDataSource.insertCountries(retrievedCountries)
+                        emit(StateAction.Succes(retrievedCountries, code))
+
 
                     }
 
@@ -40,28 +44,25 @@ class RepositoryImpl @Inject constructor(
                     else -> {}
                 }
             }
-
-        } else {
-            val list = localDataSource.getAllCountries()
-            emit(StateAction.Succes(list, "200"))
-
         }
 
-    }
-
-    private suspend fun checkAvailability(): Boolean = withContext(Dispatchers.IO) {
-        return@withContext try {
-            Socket().apply {
-                connect(InetSocketAddress("8.8.8.8", 53), 1500)
-                close()
-            }
-            true
-        } catch (e: Exception) {
-            false
-        }
     }
 
 }
+//
+//    private suspend fun checkAvailability(): Boolean = withContext(Dispatchers.IO) {
+//        return@withContext try {
+//            Socket().apply {
+//                connect(InetSocketAddress("8.8.8.8", 53), 1500)
+//                close()
+//            }
+//            true
+//        } catch (e: Exception) {
+//            false
+//        }
+//    }
+
+
 
 
 

@@ -14,13 +14,14 @@ fun AlertRetry(
     onDismiss: () -> Unit,
     onRetry: () -> Unit,
     title: String,
-    body: String
+    body: String,
 ) {
 
 
     if (isVisible) {
         AlertDialog(
-            onDismissRequest = { onDismiss() },
+            onDismissRequest = {
+                onDismiss() },
             title = {
                 AutoResizedText(
                     text = title,
@@ -68,11 +69,17 @@ fun AlertRetry(
 
 
 @Composable
-fun AlertNotification(isVisible: Boolean, onDismiss: () -> Unit, title: String, body: String) {
+fun AlertNotification(
+    isVisible: Boolean,
+    onDismiss: () -> Unit,
+    title: String,
+    body: String,
+) {
 
     if (isVisible) {
         AlertDialog(
-            onDismissRequest = { onDismiss() },
+            onDismissRequest = {
+                onDismiss() },
             title = {
                 AutoResizedText(
                     text = title,

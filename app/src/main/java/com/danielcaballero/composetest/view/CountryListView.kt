@@ -1,4 +1,5 @@
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,7 +16,11 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,12 +50,11 @@ import com.danielcaballero.composetest.view_model.VisibilityComponents
 fun CountryListView(viewModel: CountryViewModel, context: Context = LocalContext.current) {
 
     val country by viewModel.countryResponse.collectAsStateWithLifecycle()
-
+    val isFirstTime by viewModel.isFirstVisit.collectAsState(false)
     val networkStatus = viewModel.networkStatus
 
     val countryResponseDialogIsVisible = viewModel.isVisibleCountryResponseAlert
     val networkObserverDialogIsVisible = viewModel.isVisibleNetworkObserverAlert
-
 
 
     Box(
@@ -63,36 +67,38 @@ fun CountryListView(viewModel: CountryViewModel, context: Context = LocalContext
         when (networkStatus) {
 
             ConnectionStatus.Lost -> {
-                AlertNotification(
-                    isVisible = networkObserverDialogIsVisible,
-                    title = "ALERT",
-                    body = "No connection",
-                    onDismiss = {
-                        viewModel.changeVisibility(
-                            VisibilityComponents(
-                                AlertDialogs.Observer,
-                                isVisible = false
+                if (!isFirstTime)
+                    AlertNotification(
+                        isVisible = networkObserverDialogIsVisible,
+                        title = "ALERT",
+                        body = "No connection",
+                        onDismiss = {
+                            viewModel.changeVisibility(
+                                VisibilityComponents(
+                                    AlertDialogs.Observer,
+                                    isVisible = false
+                                )
                             )
-                        )
-                    }
-                )
+                        }
+                    )
             }
 
 
             ConnectionStatus.Available -> {
-                AlertNotification(
-                    isVisible = networkObserverDialogIsVisible,
-                    title = "ALERT",
-                    body = "Back online",
-                    onDismiss = {
-                        viewModel.changeVisibility(
-                            VisibilityComponents(
-                                AlertDialogs.Observer,
-                                isVisible = false
+                if (!isFirstTime)
+                    AlertNotification(
+                        isVisible = networkObserverDialogIsVisible,
+                        title = "ALERT",
+                        body = "Back online",
+                        onDismiss = {
+                            viewModel.changeVisibility(
+                                VisibilityComponents(
+                                    AlertDialogs.Observer,
+                                    isVisible = false
+                                )
                             )
-                        )
-                    }
-                )
+                        }
+                    )
 
             }
 

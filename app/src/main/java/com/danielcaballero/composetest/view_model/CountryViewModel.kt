@@ -10,16 +10,21 @@ import com.danielcaballero.composetest.common.StateAction
 import com.danielcaballero.composetest.use_cases.GetCountryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import javax.inject.Inject
 
 data class VisibilityComponents(
     val component: AlertDialogs,
-    var isVisible: Boolean
+    var isVisible: Boolean,
 )
 
 enum class AlertDialogs {
@@ -36,6 +41,10 @@ class CountryViewModel @Inject constructor(
         MutableStateFlow(null)
     val countryResponse: StateFlow<StateAction?>
         get() = _countryResponse.asStateFlow()
+
+
+    private val _isFirstVisit = Channel<Boolean>()
+    val isFirstVisit = _isFirstVisit.receiveAsFlow()
 
 
     var isVisibleCountryResponseAlert by mutableStateOf(false)
@@ -77,6 +86,7 @@ class CountryViewModel @Inject constructor(
                     getCountryUseCase().collect() {
                         _countryResponse.value = it
                         isVisibleCountryResponseAlert = true
+                        _isFirstVisit.send(false)
                     }
                 }
             }
