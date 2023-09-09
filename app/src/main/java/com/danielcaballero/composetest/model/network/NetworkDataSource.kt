@@ -8,8 +8,11 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.NoTransformationFoundException
 import io.ktor.client.request.get
 import io.ktor.client.request.url
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.serialization.decodeFromString
 import javax.inject.Inject
 
@@ -18,28 +21,25 @@ interface NetworkDataSource {
     fun getCountriesDataSource(): Flow<StateAction>
 }
 
-class NetworkDataSourceImpl @Inject constructor(
+class NetworkDataSourceImpl(
     private val service: HttpClient
-
 ) : NetworkDataSource {
     override fun getCountriesDataSource(): Flow<StateAction> = flow {
 
-        try {
             val response: List<CountryResponse> = service.get {
                 url(END_POINT_COUNTRIES_KTOR)
             }
             emit(StateAction.Succes(response.toCountryDomain(), "Data From Network"))
-        } catch (e: NoTransformationFoundException) {
-            val responseString: String = service.get(END_POINT_COUNTRIES_KTOR)
 
-            val json = kotlinx.serialization.json.Json {
-                ignoreUnknownKeys = true
-            }
-            val response = json.decodeFromString<List<CountryResponse>>(responseString)
-            emit(StateAction.Succes(response.toCountryDomain(), "Data From Network"))
+    }.catch {
+        val responseString: String = service.get(END_POINT_COUNTRIES_KTOR)
+
+        val json = kotlinx.serialization.json.Json {
+            ignoreUnknownKeys = true
         }
-
-    }
+        val response = json.decodeFromString<List<CountryResponse>>(responseString)
+        emit(StateAction.Succes(response.toCountryDomain(), "Data From Network"))
+    }.flowOn(Dispatchers.IO)
 }
 
 

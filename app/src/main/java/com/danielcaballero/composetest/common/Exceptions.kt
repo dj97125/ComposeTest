@@ -12,3 +12,7 @@ class NullBody(
 class NoInternetConnection(
     message: String = "No Internet Conection"
 ) : Exception(message)
+
+class EmptyCacheException(
+    message: String = "Empty Data Base"
+) : Exception(message)

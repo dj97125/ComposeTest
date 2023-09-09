@@ -1,56 +1,45 @@
 package com.danielcaballero.composetest
 
+import CountryListView
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
-import androidx.lifecycle.lifecycleScope
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import com.danielcaballero.composetest.common.ConnectionStatus
 import com.danielcaballero.composetest.common.NetworkConnectivityObserver
 import com.danielcaballero.composetest.common.NetworkConnectivityObserverImpl
 import com.danielcaballero.composetest.ui.theme.ComposeTestTheme
-import com.danielcaballero.composetest.view.Material3AppTheme
-import com.danielcaballero.composetest.view_model.AlertDialogs
-import com.danielcaballero.composetest.view_model.CountryViewModel
-import com.danielcaballero.composetest.view_model.VisibilityComponents
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-
     private lateinit var connectivityObserver: NetworkConnectivityObserver
 
-    private val viewModel: CountryViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
         connectivityObserver = NetworkConnectivityObserverImpl(applicationContext)
 
-        connectivityObserver.observe().onEach {
-            viewModel.networkStatus(status = it)
-
-            viewModel.changeVisibility(
-                VisibilityComponents(
-                    AlertDialogs.Observer,
-                    isVisible = true,
-                )
-            )
-
-        }.launchIn(lifecycleScope)
-
         setContent {
-            ComposeTestTheme {
-                Material3AppTheme()
+            ComposeTestTheme(
+                darkTheme = isSystemInDarkTheme(),
+                dynamicColor = true
+            ) {
+                val network by connectivityObserver.observe()
+                    .collectAsState(initial = ConnectionStatus.Unavailable)
+
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    CountryListView(networkStatus = network)
+                }
             }
         }
+
     }
 }
 

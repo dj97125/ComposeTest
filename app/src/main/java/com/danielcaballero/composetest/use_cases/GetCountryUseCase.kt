@@ -1,9 +1,11 @@
 package com.danielcaballero.composetest.use_cases
 
 import com.danielcaballero.composetest.domain.Repository
-import javax.inject.Inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class GetCountryUseCase @Inject constructor(private val repository: Repository) {
+class GetCountryUseCase : KoinComponent {
+    private val repository: Repository by inject()
 
     operator fun invoke() =
         repository.getCountriesDomainLayer()

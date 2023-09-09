@@ -1,66 +1,71 @@
 package com.danielcaballero.composetest.domain
 
+import com.danielcaballero.composetest.common.EmptyCacheException
 import com.danielcaballero.composetest.common.StateAction
 import com.danielcaballero.composetest.model.network.NetworkDataSource
 import com.danielcaballero.composetest.model.remote.LocalDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.flowOn
 import java.net.InetSocketAddress
 import java.net.Socket
-import javax.inject.Inject
 
 
 interface Repository {
     fun getCountriesDomainLayer(): Flow<StateAction>
 }
-class RepositoryImpl @Inject constructor(
+
+class RepositoryImpl(
     private val localDataSource: LocalDataSource,
     private val networkDataSource: NetworkDataSource
-): Repository {
+) : Repository {
     override fun getCountriesDomainLayer(): Flow<StateAction> = flow {
+        checkAvailabilityFlow().collect() { networkState ->
+            if (networkState) {
+                networkDataSource.getCountriesDataSource().collect() { state ->
+                    when (state) {
+                        is StateAction.Succes<*> -> {
+                            val retrievedCountries = state.respoonse as List<CountryDomain>
 
-        val list = localDataSource.getAllCountries()
-
-        if (list.isEmpty().not()) {
-            emit(StateAction.Succes(list, "200"))
-        } else {
-            networkDataSource.getCountriesDataSource().collect() { state ->
-                when (state) {
-                    is StateAction.Succes<*> -> {
-                        val retrievedCountries = state.respoonse as List<CountryDomain>
-                        val code = state.code
-                        localDataSource.insertCountries(retrievedCountries)
-                        emit(StateAction.Succes(retrievedCountries, code))
+                            localDataSource.insertCountries(retrievedCountries)
 
 
+                        }
+
+                        is StateAction.Errror -> {
+                            emit(StateAction.Errror(state.exception))
+                        }
+
+                        else -> {}
                     }
-
-                    is StateAction.Errror -> {
-                        emit(StateAction.Errror(state.exception))
-                    }
-
-                    else -> {}
                 }
             }
         }
 
-    }
+        val list = localDataSource.getAllCountries()
+
+        if (list.isNotEmpty()) {
+            emit(StateAction.Succes(list, "200"))
+        } else {
+            emit(StateAction.Errror(EmptyCacheException()))
+        }
+
+    }.flowOn(Dispatchers.IO)
+
+    private fun checkAvailabilityFlow(): Flow<Boolean> = flow {
+        Socket().apply {
+            connect(InetSocketAddress("8.8.8.8", 53), 1500)
+            close()
+        }
+        emit(true)
+    }.catch {
+        emit(false)
+    }.flowOn(Dispatchers.IO)
 
 }
-//
-//    private suspend fun checkAvailability(): Boolean = withContext(Dispatchers.IO) {
-//        return@withContext try {
-//            Socket().apply {
-//                connect(InetSocketAddress("8.8.8.8", 53), 1500)
-//                close()
-//            }
-//            true
-//        } catch (e: Exception) {
-//            false
-//        }
-//    }
+
 
 
 

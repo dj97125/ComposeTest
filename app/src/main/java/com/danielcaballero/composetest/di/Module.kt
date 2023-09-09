@@ -35,20 +35,20 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 @InstallIn(ViewModelComponent::class)
 interface Module {
 
-    @Binds
-    fun provideNetworkDataSource(
-        networkDataSourceImpl: NetworkDataSourceImpl
-    ): NetworkDataSource
+//    @Binds
+//    fun provideNetworkDataSource(
+//        networkDataSourceImpl: NetworkDataSourceImpl
+//    ): NetworkDataSource
 
 
     companion object {
 
 
-        @Provides
-        fun provideExceptionHandler(): CoroutineExceptionHandler =
-            CoroutineExceptionHandler { _, throwable ->
-                Log.e("CountryViewModel", throwable.toString())
-            }
+//        @Provides
+//        fun provideExceptionHandler(): CoroutineExceptionHandler =
+//            CoroutineExceptionHandler { _, throwable ->
+//                Log.e("CountryViewModel", throwable.toString())
+//            }
 
 //        @Provides
 //        fun provideService(): NetworkCountry =
@@ -71,52 +71,50 @@ interface Module {
 //                .writeTimeout(30, TimeUnit.SECONDS)
 //                .build()
 
-        @Provides
-        fun provideHttpClient(): HttpClient {
-            return HttpClient(Android) {
-                val time = 3000L
-                install(Logging) {
-                    level = LogLevel.ALL
-                }
-                install(JsonFeature) {
+//        @Provides
+//        fun provideHttpClient(): HttpClient {
+//            return HttpClient(Android) {
+//                val time = 3000L
+//                install(Logging) {
+//                    level = LogLevel.ALL
+//                }
+//                install(JsonFeature) {
+//
+//                    serializer = KotlinxSerializer()
+//                }
+//                install(HttpTimeout) {
+//                    requestTimeoutMillis = time
+//                    connectTimeoutMillis = time
+//                    socketTimeoutMillis = time
+//                }
+//                defaultRequest {
+//                    if (method != HttpMethod.Get) contentType(ContentType.Application.Json)
+//                    accept(ContentType.Application.Json)
+//                }
+//            }
+//        }
 
-                    serializer = KotlinxSerializer()
-                }
-                install(HttpTimeout) {
-                    requestTimeoutMillis = time
-                    connectTimeoutMillis = time
-                    socketTimeoutMillis = time
-                }
-                defaultRequest {
-                    if (method != HttpMethod.Get) contentType(ContentType.Application.Json)
-                    accept(ContentType.Application.Json)
-                }
-            }
-        }
-
-        @Provides
-        fun provideSqlDriver(app: Application): SqlDriver = AndroidSqliteDriver(
-            schema = CountryDataBase.Schema,
-            context = app,
-            name = "country.db"
-
-        )
-
-
-        @Provides
-        fun provideLocalDataSource(driver: SqlDriver): LocalDataSource =
-            LocalDataSourceImpl(CountryDataBase(driver))
+//        @Provides
+//        fun provideSqlDriver(app: Application): SqlDriver = AndroidSqliteDriver(
+//            schema = CountryDataBase.Schema,
+//            context = app,
+//            name = "country.db"
+//
+//        )
+//        @Provides
+//        fun provideLocalDataSource(driver: SqlDriver): LocalDataSource =
+//            LocalDataSourceImpl(CountryDataBase(driver))
 
 //        @Provides
 //        fun provideConnectivityObserver(@ApplicationContext context: Context): NetworkConnectivityObserver =
 //            NetworkConnectivityObserverImpl(context)
 
-        @Provides
-        fun provideRepository(
-            localDataSource: LocalDataSource,
-            networkDataSource: NetworkDataSource
-        ): Repository =
-            RepositoryImpl(localDataSource, networkDataSource)
+//        @Provides
+//        fun provideRepository(
+//            localDataSource: LocalDataSource,
+//            networkDataSource: NetworkDataSource
+//        ): Repository =
+//            RepositoryImpl(localDataSource, networkDataSource)
 
 
     }

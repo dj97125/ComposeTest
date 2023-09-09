@@ -4,24 +4,32 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import com.danielcaballero.composetest.ui.theme.Typography
 
 
+
+
 @Composable
-fun AlertRetry(
-    isVisible: Boolean,
-    onDismiss: () -> Unit,
-    onRetry: () -> Unit,
+fun AlertDialog(
     title: String,
     body: String,
+    modifier: Modifier,
+    onRetry: () -> Unit = {}
 ) {
+    var visibility by remember { mutableStateOf(true) }
 
-
-    if (isVisible) {
+    if (visibility) {
         AlertDialog(
+            modifier = modifier ,
             onDismissRequest = {
-                onDismiss() },
+                visibility = false
+            },
             title = {
                 AutoResizedText(
                     text = title,
@@ -40,65 +48,8 @@ fun AlertRetry(
             },
             confirmButton = {
                 TextButton(onClick = {
+                    visibility = false
                     onRetry()
-                    onDismiss()
-                }) {
-                    AutoResizedText(
-                        text = "Retry",
-                        color = MaterialTheme.colorScheme.secondary,
-                        style = Typography.titleMedium,
-                        textAlign = TextAlign.Start
-                    )
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { onDismiss() }) {
-                    AutoResizedText(
-                        text = "Dismiss",
-                        color = MaterialTheme.colorScheme.secondary,
-                        style = Typography.titleMedium,
-                        textAlign = TextAlign.Start
-                    )
-                }
-            }
-        )
-    }
-
-
-}
-
-
-@Composable
-fun AlertNotification(
-    isVisible: Boolean,
-    onDismiss: () -> Unit,
-    title: String,
-    body: String,
-) {
-
-    if (isVisible) {
-        AlertDialog(
-            onDismissRequest = {
-                onDismiss() },
-            title = {
-                AutoResizedText(
-                    text = title,
-                    color = MaterialTheme.colorScheme.secondary,
-                    style = Typography.titleMedium,
-                    textAlign = TextAlign.Start
-                )
-            },
-            text = {
-                AutoResizedText(
-                    text = body,
-                    color = MaterialTheme.colorScheme.secondary,
-                    style = Typography.titleMedium,
-                    textAlign = TextAlign.Start
-                )
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    onDismiss()
                 }) {
                     AutoResizedText(
                         text = "Dismiss",
@@ -107,10 +58,12 @@ fun AlertNotification(
                         textAlign = TextAlign.Start
                     )
                 }
-            }
-        )
+            })
+
     }
 
 
 
 }
+
+
