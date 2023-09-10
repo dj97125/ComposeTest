@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.retry
 import java.net.InetSocketAddress
 import java.net.Socket
 
@@ -22,7 +23,7 @@ class RepositoryImpl(
     private val networkDataSource: NetworkDataSource
 ) : Repository {
     override fun getCountriesDomainLayer(): Flow<StateAction> = flow {
-        checkAvailabilityFlow().collect() { networkState ->
+        checkAvailabilityFlow().retry(3).collect() { networkState ->
             if (networkState) {
                 networkDataSource.getCountriesDataSource().collect() { state ->
                     when (state) {

@@ -30,8 +30,8 @@ import androidx.compose.ui.unit.sp
 import com.danielcaballero.composetest.common.ConnectionStatus
 import com.danielcaballero.composetest.common.StateAction
 import com.danielcaballero.composetest.domain.CountryDomain
-import com.danielcaballero.composetest.ui.util.AlertDialog
-import com.danielcaballero.composetest.ui.util.LoadingAnimation
+import com.danielcaballero.composetest.presentation.ui.util.AlertDialog
+import com.danielcaballero.composetest.presentation.ui.util.LoadingAnimation
 import com.danielcaballero.composetest.view_model.CountryViewModel
 
 @Composable

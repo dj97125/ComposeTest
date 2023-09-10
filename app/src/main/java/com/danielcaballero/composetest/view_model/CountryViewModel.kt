@@ -15,20 +15,12 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
-
-data class VisibilityComponents(
-    val component: AlertDialogs,
-    var isVisible: Boolean,
-)
-
-enum class AlertDialogs {
-    CountryResponse, Observer
-}
 
 class CountryViewModel(
     val getCountryUseCase: GetCountryUseCase,
@@ -51,16 +43,6 @@ class CountryViewModel(
     val visibilityFlow = visibility.receiveAsFlow()
 
 
-    var isVisibleCountryResponseAlert by mutableStateOf(false)
-        private set
-
-    var isVisibleNetworkObserverAlert by mutableStateOf(false)
-        private set
-
-
-    var networkStatus by mutableStateOf<ConnectionStatus?>(null)
-        private set
-
 
     init {
         getCountries()
@@ -80,11 +62,11 @@ class CountryViewModel(
                             stateReceiveed
                         }
                         visibility.send(true)
-                        isVisibleCountryResponseAlert = true
                     }
                 }
             }
         }
     }
+
 
 }

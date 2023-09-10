@@ -21,12 +21,12 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.danielcaballero.composetest.domain.CountryDomain
-import com.danielcaballero.composetest.ui.theme.Typography
-import com.danielcaballero.composetest.ui.util.AutoResizedText
-import com.danielcaballero.composetest.ui.util.COUNTRY_CAPITAL_LABEL
-import com.danielcaballero.composetest.ui.util.COUNTRY_NAME_LABEL
-import com.danielcaballero.composetest.ui.util.DETAILS_CAPITAL
-import com.danielcaballero.composetest.ui.util.DETAILS_NAME
+import com.danielcaballero.composetest.presentation.ui.theme.Typography
+import com.danielcaballero.composetest.presentation.ui.util.AutoResizedText
+import com.danielcaballero.composetest.presentation.ui.util.COUNTRY_CAPITAL_LABEL
+import com.danielcaballero.composetest.presentation.ui.util.COUNTRY_NAME_LABEL
+import com.danielcaballero.composetest.presentation.ui.util.DETAILS_CAPITAL
+import com.danielcaballero.composetest.presentation.ui.util.DETAILS_NAME
 
 @Composable
 fun CountryCardView(

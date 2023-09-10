@@ -1,14 +1,12 @@
 package com.danielcaballero.composetest.common
 
-import com.danielcaballero.composetest.model.network.country_response.CountryResponse
+import com.danielcaballero.composetest.domain.CountryDomain
 
 val fakeCountry =
-    CountryResponse(
+    CountryDomain(
         capital = "Morelia",
         code = null,
         name = null,
         region = "Michoacan",
-        currency = null,
-        flag = null,
-        languaje = null
+        flag = null
     )

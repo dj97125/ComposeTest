@@ -34,7 +34,7 @@ import org.koin.dsl.module
 
 val appModule = module {
 
-    single { /// singleton
+    single {
         HttpClient(Android) {
             val time = 5000L
             install(Logging) {
@@ -60,7 +60,6 @@ val appModule = module {
 
 
     single<Repository> {
-//        RepositoryImpl(get(named("Local")), get())
         RepositoryImpl(get(), get())
     }
 
@@ -68,15 +67,11 @@ val appModule = module {
         NetworkConnectivityObserverImpl(get<Context>())
     }
 
-//    factory { /// will provide as many dependencies wee need, in this case repoossitory
-////        RepositoryImpl(get())
-//    }
 
     single<NetworkDataSource> {
         NetworkDataSourceImpl(get())
     }
 
-//    single<LocalDataSource>(qualifier = named("Local")) { /// this is the way we use qualifier
     single<LocalDataSource> {
         LocalDataSourceImpl(CountryDataBase(get<SqlDriver>()))
     }

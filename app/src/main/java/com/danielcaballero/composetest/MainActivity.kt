@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import com.danielcaballero.composetest.common.ConnectionStatus
 import com.danielcaballero.composetest.common.NetworkConnectivityObserver
 import com.danielcaballero.composetest.common.NetworkConnectivityObserverImpl
-import com.danielcaballero.composetest.ui.theme.ComposeTestTheme
+import com.danielcaballero.composetest.presentation.ui.theme.ComposeTestTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
