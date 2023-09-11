@@ -14,6 +14,7 @@ This app shows skills such as:
 * Flows, FlowCollectors
 * Connectivity Observer
 * SqlDelight
+* Material Theme 3
 * Clean Architechture (Domain, Repository, UseCases, DataSources)
 * Extension Functios, Scope Functions
 * Mockk for unit testing
