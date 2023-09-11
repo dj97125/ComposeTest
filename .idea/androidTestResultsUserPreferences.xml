@@ -3,6 +3,20 @@
   <component name="AndroidTestResultsUserPreferences">
     <option name="androidTestResultsTableState">
       <map>
+        <entry key="-2116421256">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="RFCW11NZW1Y" value="120" />
+                  <entry key="Tests" value="360" />
+                  <entry key="samsung&#10; SM-S911U" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
         <entry key="-1550952133">
           <value>
             <AndroidTestResultsTableState>
@@ -12,6 +26,49 @@
                   <entry key="RFCW11NZW1Y" value="120" />
                   <entry key="Tests" value="360" />
                   <entry key="samsung" value="120" />
+                  <entry key="samsung&#10; SM-S911U" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="-1317693485">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="RFCW11NZW1Y" value="120" />
+                  <entry key="Tests" value="360" />
+                  <entry key="samsung" value="120" />
+                  <entry key="samsung&#10; SM-S911U" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="-560734349">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="RFCW11NZW1Y" value="120" />
+                  <entry key="Tests" value="360" />
+                  <entry key="samsung&#10; SM-S911U" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="106691751">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="RFCW11NZW1Y" value="120" />
+                  <entry key="Tests" value="360" />
                   <entry key="samsung&#10; SM-S911U" value="120" />
                 </map>
               </option>

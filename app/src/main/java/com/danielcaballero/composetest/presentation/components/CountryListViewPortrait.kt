@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import com.danielcaballero.composetest.common.ConnectionStatus
 import com.danielcaballero.composetest.common.StateAction
 import com.danielcaballero.composetest.domain.CountryDomain
+import com.danielcaballero.composetest.presentation.ui.util.ALERT_DIALOG
 import com.danielcaballero.composetest.presentation.ui.util.AlertDialog
 import com.danielcaballero.composetest.presentation.ui.util.LoadingAnimation
 import com.danielcaballero.composetest.view_model.CountryViewModel
@@ -84,8 +86,6 @@ fun CountryListViewPortrait(
                 }
 
                 is StateAction.Errror -> {
-
-                    if (visibility)
                         AlertDialog(
                             onRetry = { viewModel.getCountries() },
                             title = "ERROR",

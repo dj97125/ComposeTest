@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import com.danielcaballero.composetest.presentation.ui.theme.Typography
 
@@ -43,11 +44,13 @@ fun AlertDialog(
                     text = body,
                     color = MaterialTheme.colorScheme.secondary,
                     style = Typography.titleMedium,
-                    textAlign = TextAlign.Start
+                    textAlign = TextAlign.Start,
+                    modifier = modifier.testTag(ALERT_DIALOG_BODY)
                 )
             },
             confirmButton = {
-                TextButton(onClick = {
+                TextButton(
+                    onClick = {
                     visibility = false
                     onRetry()
                 }) {
@@ -55,7 +58,7 @@ fun AlertDialog(
                         text = "Dismiss",
                         color = MaterialTheme.colorScheme.secondary,
                         style = Typography.titleMedium,
-                        textAlign = TextAlign.Start
+                        textAlign = TextAlign.Start,
                     )
                 }
             })
