@@ -8,7 +8,6 @@ import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onParent
 import androidx.compose.ui.test.performClick
 import com.danielcaballero.composetest.common.ConnectionStatus
 import com.danielcaballero.composetest.common.StateAction
@@ -18,9 +17,11 @@ import com.danielcaballero.composetest.presentation.ui.util.ASSERTING_CONNECTION
 import com.danielcaballero.composetest.presentation.ui.util.ASSERTING_CONNECTION_STATUS_LOST
 import com.danielcaballero.composetest.presentation.ui.util.ASSERTING_CONNECTION_STATUS_UNAVAILABLE
 import com.danielcaballero.composetest.presentation.ui.util.COUNTRY_LIST_VIEW_LANDSCAPE
+import com.danielcaballero.composetest.presentation.ui.util.DISMISS_BUTTON
 import com.danielcaballero.composetest.presentation.ui.util.LIST_OF_ELEMENTS
 import com.danielcaballero.composetest.presentation.ui.util.LOADING_ANIMATION
 import com.danielcaballero.composetest.presentation.ui.util.NETWORK_LABEL
+import com.danielcaballero.composetest.presentation.ui.util.ON_ERROR_ALERT_DIALOG_MESSSAGE
 import com.danielcaballero.composetest.use_cases.GetCountryUseCase
 import com.danielcaballero.composetest.view_model.CountryViewModel
 import io.ktor.client.engine.cio.FailToConnectException
@@ -90,10 +91,29 @@ class CountryListViewLandscapeTest {
             )
 
             onNodeWithTag(COUNTRY_LIST_VIEW_LANDSCAPE).assertExists().assertIsDisplayed()
-            onNodeWithTag(NETWORK_LABEL).assertExists().assertIsDisplayed().assertTextEquals(ASSERTING_CONNECTION_STATUS_AVAILABLE)
+            onNodeWithTag(NETWORK_LABEL).assertExists().assertIsDisplayed()
+                .assertTextEquals(ASSERTING_CONNECTION_STATUS_AVAILABLE)
             onAllNodesWithTag(ALERT_DIALOG).onFirst().assertExists().assertIsDisplayed()
-            onNodeWithText("Something went wrong").assertExists()
-            onNodeWithText("Dismiss").performClick()
+            onNodeWithText(ON_ERROR_ALERT_DIALOG_MESSSAGE).assertExists()
+            onNodeWithText(DISMISS_BUTTON).performClick()
+            onAllNodesWithTag(ALERT_DIALOG).onFirst().assertDoesNotExist()
+
+
+        }
+
+    @Test
+    fun testingElementExistWithERRORstateRetryClicked(): Unit =
+        with(composeTestRule) {
+
+            buildCountryListViewLandscape(
+                networkStatus = ConnectionStatus.Available,
+                stateAction = StateAction.Errror(FailToConnectException())
+            )
+
+
+            onAllNodesWithTag(ALERT_DIALOG).onFirst().assertExists().assertIsDisplayed()
+            onNodeWithText(ON_ERROR_ALERT_DIALOG_MESSSAGE).assertExists()
+            onNodeWithText(DISMISS_BUTTON).performClick()
             onAllNodesWithTag(ALERT_DIALOG).onFirst().assertDoesNotExist()
 
 

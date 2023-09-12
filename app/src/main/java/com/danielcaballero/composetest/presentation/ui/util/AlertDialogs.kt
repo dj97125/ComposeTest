@@ -45,7 +45,6 @@ fun AlertDialog(
                     color = MaterialTheme.colorScheme.secondary,
                     style = Typography.titleMedium,
                     textAlign = TextAlign.Start,
-                    modifier = modifier.testTag(ALERT_DIALOG_BODY)
                 )
             },
             confirmButton = {
